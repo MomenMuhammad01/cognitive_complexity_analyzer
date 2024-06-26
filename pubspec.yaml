@@ -1,13 +1,13 @@
 name: cognitive_complexity_analyzer
 description: "A new Flutter package project."
-version: 0.0.3
+version: 0.0.4
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
-  analyzer: ^5.13.0
+  analyzer: ^6.7.0
   flutter:
     sdk: flutter
 
