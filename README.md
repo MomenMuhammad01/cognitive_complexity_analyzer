@@ -3,7 +3,7 @@
 Cognitive complexity allows us to measure the complexity of a piece of code with more accuracy. While it provides a decent overall assessment, it does overlook some important aspects that make code harder to understand.
 
 ## Features
-- Leverages Analyzer Packages: Utilizes the analyzer package to navigate the Abstract Syntax Tree (AST) of your Dart code.
+- Leverages Analyzer Packages: Utilizes the src.analyzer package to navigate the Abstract Syntax Tree (AST) of your Dart code.
 - Tracks Nesting Levels: Keeps track of the current nesting level (e.g., if statements within if statements) to account for increased complexity.
 - Considers Different Constructs: Assigns different base complexity values for various control flow statements (if, for, while, etc.) and expressions (logical operators, conditional expressions).
 - Handles Recursion: It identifies and adds complexity for recursive method calls.
@@ -20,7 +20,7 @@ the calculation is based on many factors and uses a points system based on each 
 
 ## Getting started
 
-TODO: This package depends on analyzer package
+TODO: This package depends on src.analyzer package
 
 ## Usage
 

@@ -2,13 +2,11 @@ library cognitive_complexity_analyzer;
 
 import 'dart:io';
 
-import 'package:cognitive_complexity_analyzer/analyzer/analysis_results.dart';
-import 'package:cognitive_complexity_analyzer/analyzer/analysis_settings.dart';
-import 'package:cognitive_complexity_analyzer/processor/file_processor.dart';
+import 'package:cognitive_complexity_analyzer/analyzer.dart';
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
-    print('Error: Please provide a directory path and (optional) settings.');
+    print(StringsManager.argumentsError);
     return;
   }
 
@@ -22,7 +20,7 @@ void main(List<String> arguments) {
       maxComplexity = int.parse(arguments[1]);
       highNestingThreshold = int.parse(arguments[2]);
     } catch (error) {
-      print('Error parsing settings arguments: $error');
+      print(StringsManager.handlingError(error));
 
       return;
     }
@@ -35,7 +33,7 @@ void main(List<String> arguments) {
   ); // Initialize with default settings
 
   if (!directory.existsSync()) {
-    print('Directory not found: $directoryPath');
+    print(StringsManager.directoryNotFound(directoryPath));
     return;
   }
 
@@ -70,25 +68,26 @@ void _generateAndPrintReport(List<AnalysisResult> results,
   generateReport(results);
 
   if (results.isEmpty) {
-    print('No files with high cognitive complexity found.');
+    print(StringsManager.noHighCognitiveComplexityFound);
   } else {
-    print('High Cognitive Complexity Detected:');
-    print('==============================');
+    print(StringsManager.highCognitiveComplexityDetected);
+    print(StringsManager.divider);
     for (var result in results) {
-      print('File: ${result.filePath}');
-      print('Cognitive Complexity: ${result.cognitiveComplexity}');
+      print(StringsManager.filePath(result.filePath));
+      print(StringsManager.cognitiveComplexityResults(
+          result.cognitiveComplexity));
 
       if (result.highComplexityLines.isNotEmpty) {
-        print(
-            'Lines with High Nesting (>${settings.highNestingLevelThreshold}):');
+        print(StringsManager.linesWithHighNesting(
+            settings.highNestingLevelThreshold));
 
         for (var line in result.highComplexityLines) {
           print('- $line');
         }
       }
-      print('==============================');
+      print(StringsManager.divider);
     }
   }
-  print('Files processed: $filesProcessed');
-  print('Files with high cognitive complexity: ${results.length}');
+  print(StringsManager.numberOfProcessedFiles(filesProcessed));
+  print(StringsManager.filesWithHighComplexity(results.length));
 }
