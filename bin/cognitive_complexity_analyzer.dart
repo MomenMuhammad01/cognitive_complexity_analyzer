@@ -5,13 +5,11 @@ import 'dart:io';
 import 'package:cognitive_complexity_analyzer/analyzer/analysis_results.dart';
 import 'package:cognitive_complexity_analyzer/analyzer/analysis_settings.dart';
 import 'package:cognitive_complexity_analyzer/processor/file_processor.dart';
-import 'package:flutter/foundation.dart';
 
 void main(List<String> arguments) {
   if (arguments.length < 2) {
-    if (kDebugMode) {
-      print('Error: Please provide a directory path and (optional) settings.');
-    }
+    print('Error: Please provide a directory path and (optional) settings.');
+
     return;
   }
 
@@ -25,9 +23,8 @@ void main(List<String> arguments) {
       maxComplexity = int.parse(arguments[1]);
       highNestingThreshold = int.parse(arguments[2]);
     } catch (error) {
-      if (kDebugMode) {
-        print('Error parsing settings arguments: $error');
-      }
+      print('Error parsing settings arguments: $error');
+
       return;
     }
   }
@@ -79,28 +76,20 @@ void _generateAndPrintReport(List<AnalysisResult> results,
     print('High Cognitive Complexity Detected:');
     print('==============================');
     for (var result in results) {
-      if (kDebugMode) {
-        print('File: ${result.filePath}');
-        print('Cognitive Complexity: ${result.cognitiveComplexity}');
-      }
+      print('File: ${result.filePath}');
+      print('Cognitive Complexity: ${result.cognitiveComplexity}');
+
       if (result.highComplexityLines.isNotEmpty) {
-        if (kDebugMode) {
-          print(
-              'Lines with High Nesting (>${settings.highNestingLevelThreshold}):');
-        }
+        print(
+            'Lines with High Nesting (>${settings.highNestingLevelThreshold}):');
+
         for (var line in result.highComplexityLines) {
-          if (kDebugMode) {
-            print('- $line');
-          }
+          print('- $line');
         }
       }
-      if (kDebugMode) {
-        print('==============================');
-      }
+      print('==============================');
     }
   }
-  if (kDebugMode) {
-    print('Files processed: $filesProcessed');
-    print('Files with high cognitive complexity: ${results.length}');
-  }
+  print('Files processed: $filesProcessed');
+  print('Files with high cognitive complexity: ${results.length}');
 }
