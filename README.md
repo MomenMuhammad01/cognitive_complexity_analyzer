@@ -24,7 +24,22 @@ TODO: This package depends on analyzer package
 
 ## Usage
 
-
+- Without Custom Settings 
 ```Command
 dart run --enable-vm-service cognitive_complexity_analyzer [REPLACE WITH FOLDER NAME THAT YOU WANT TO ANALYZE]
+```
+
+- With Custom Settings
+```Command
+dart run --enable-vm-service cognitive_complexity_analyzer [REPLACE WITH FOLDER NAME THAT YOU WANT TO ANALYZE] [COMPLEXITY NUM] [HighNestingThreshold]
+```
+-- Examples : 
+
+
+```
+dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src 20 4  # Without Custom Settings
+```
+
+```
+dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src 20 4  #  maxComplexity 20 and highNestingThreshold 4
 ```
