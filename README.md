@@ -10,7 +10,8 @@ Cognitive complexity allows us to measure the complexity of a piece of code with
 - Provides Complexity Score and High-Complexity Sections: Calculates a total complexity score and identifies lines exceeding a certain complexity threshold within a specific nesting depth.
 
 ## How it calculates
-the calculation is based on many factors and uses a points system based on each factor 
+
+the calculation is based on many factors and uses a points system based on each factor to evaluate if there is a cognitive issue or not
 
 - +1 point: for conditional statements (if, else if, switch)
 - +1 points: for nested conditional statements (if inside an if)
@@ -23,6 +24,15 @@ the calculation is based on many factors and uses a points system based on each 
 TODO: This package depends on src.analyzer package
 
 ## Usage
+
+1- Add package to your pubspec.yaml file like this : 
+
+```
+  cognitive_complexity_analyzer:
+    git:
+      url: https://github.com/MomenMuhammad01/cognitive_complexity_analyzer.git
+```
+2- Run The code in your project commandline with the following commands 
 
 - Without Custom Settings 
 ```Command
@@ -43,3 +53,10 @@ dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project
 ```
 dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src 20 4  #  maxComplexity 20 and highNestingThreshold 4
 ```
+
+## Generated Report File
+
+- The package will generate a report file containes all the informations about the files that has a cognitive complexity issues.
+- Each file represented with a path and a cognitive score
+- The Generated report contains the date and time of generation EXAMPLE : cognitive_complexity_report-2024-06-26-16:43.txt
+
