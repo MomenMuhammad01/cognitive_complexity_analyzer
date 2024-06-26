@@ -37,7 +37,7 @@ dart run --enable-vm-service cognitive_complexity_analyzer [REPLACE WITH FOLDER 
 
 
 ```
-dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src 20 4  # Without Custom Settings
+dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src  # Without Custom Settings
 ```
 
 ```
