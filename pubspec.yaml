@@ -1,21 +1,24 @@
 name: cognitive_complexity_analyzer
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
-  analyzer: ^6.4.1
+  analyzer: ^6.7.0
   flutter:
     sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
+
+bin:
+  # Name of your executable file (without the .dart extension)
+  cognitive_complexity_analyzer: # This should match your file name
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
