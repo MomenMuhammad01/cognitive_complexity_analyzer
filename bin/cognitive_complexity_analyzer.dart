@@ -5,16 +5,38 @@ import 'dart:io';
 import 'package:cognitive_complexity_analyzer/analyzer/analysis_results.dart';
 import 'package:cognitive_complexity_analyzer/analyzer/analysis_settings.dart';
 import 'package:cognitive_complexity_analyzer/processor/file_processor.dart';
+import 'package:flutter/foundation.dart';
 
 void main(List<String> arguments) {
-  if (arguments.isEmpty) {
-    print('Error: Please provide a directory path as an argument.');
+  if (arguments.length < 2) {
+    if (kDebugMode) {
+      print('Error: Please provide a directory path and (optional) settings.');
+    }
     return;
   }
 
   var directoryPath = arguments[0];
+  int? maxComplexity;
+  int? highNestingThreshold;
+
+  // Parse optional settings arguments (if any)
+  if (arguments.length >= 3) {
+    try {
+      maxComplexity = int.parse(arguments[1]);
+      highNestingThreshold = int.parse(arguments[2]);
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error parsing settings arguments: $error');
+      }
+      return;
+    }
+  }
+
   var directory = Directory(directoryPath);
-  var settings = AnalysisSettings(); // Initialize with default settings
+  var settings = AnalysisSettings(
+    highNestingLevelThreshold: highNestingThreshold ?? 3,
+    maxCognitiveComplexity: maxComplexity ?? 15,
+  ); // Initialize with default settings
 
   if (!directory.existsSync()) {
     print('Directory not found: $directoryPath');
@@ -57,19 +79,28 @@ void _generateAndPrintReport(List<AnalysisResult> results,
     print('High Cognitive Complexity Detected:');
     print('==============================');
     for (var result in results) {
-      print('File: ${result.filePath}');
-      print('Cognitive Complexity: ${result.cognitiveComplexity}');
+      if (kDebugMode) {
+        print('File: ${result.filePath}');
+        print('Cognitive Complexity: ${result.cognitiveComplexity}');
+      }
       if (result.highComplexityLines.isNotEmpty) {
-        print(
-            'Lines with High Nesting (>${settings.highNestingLevelThreshold}):');
+        if (kDebugMode) {
+          print(
+              'Lines with High Nesting (>${settings.highNestingLevelThreshold}):');
+        }
         for (var line in result.highComplexityLines) {
-          print('- $line');
+          if (kDebugMode) {
+            print('- $line');
+          }
         }
       }
-      print('==============================');
+      if (kDebugMode) {
+        print('==============================');
+      }
     }
   }
-
-  print('Files processed: $filesProcessed');
-  print('Files with high cognitive complexity: ${results.length}');
+  if (kDebugMode) {
+    print('Files processed: $filesProcessed');
+    print('Files with high cognitive complexity: ${results.length}');
+  }
 }

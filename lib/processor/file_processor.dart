@@ -4,6 +4,7 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:cognitive_complexity_analyzer/analyzer/analysis_results.dart';
 import 'package:cognitive_complexity_analyzer/analyzer/analysis_settings.dart';
 import 'package:cognitive_complexity_analyzer/visitor/cognitive_complexity_visitor.dart';
+import 'package:flutter/foundation.dart';
 
 void calculateCognitiveComplexity(
     String code, CognitiveComplexityVisitor visitor) {
@@ -60,7 +61,9 @@ void generateReport(List<AnalysisResult> results) async {
   try {
     var sink = file.openWrite(); // Use async/await for file operations
     if (results.isEmpty) {
-      print('No files with high cognitive complexity found.');
+      if (kDebugMode) {
+        print('No files with high cognitive complexity found.');
+      }
       return; // Exit the function if no issues are found
     }
 
@@ -68,9 +71,15 @@ void generateReport(List<AnalysisResult> results) async {
 
     await sink.flush(); // Flush data to disk before closing
     sink.close();
-    print('==============================');
-    print('Report generated at: $filename');
+    if (kDebugMode) {
+      print('==============================');
+    }
+    if (kDebugMode) {
+      print('Report generated at: $filename');
+    }
   } catch (e) {
-    print('Error generating report: $e');
+    if (kDebugMode) {
+      print('Error generating report: $e');
+    }
   }
 }

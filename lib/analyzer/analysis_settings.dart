@@ -3,7 +3,7 @@ class AnalysisSettings {
   final int highNestingLevelThreshold;
 
   AnalysisSettings({
-    this.maxCognitiveComplexity = 15,
-    this.highNestingLevelThreshold = 3,
+    required this.maxCognitiveComplexity,
+    required this.highNestingLevelThreshold,
   });
 }
