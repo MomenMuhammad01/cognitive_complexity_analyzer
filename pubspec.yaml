@@ -7,7 +7,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  analyzer: ^6.7.0
+  analyzer: ^5.13.0
   flutter:
     sdk: flutter
 
