@@ -12,11 +12,11 @@ Cognitive complexity allows us to measure the complexity of a piece of code with
 ## How it calculates
 the calculation is based on many factors and uses a points system based on each factor 
 
-+1 point: for conditional statements (if, else if, switch)
-+1 points: for nested conditional statements (if inside an if)
-+2 point: for loops (for, while)
-+1 point: for complex expressions (functions within expressions)
-+2 points: for recursive functions
+- +1 point: for conditional statements (if, else if, switch)
+- +1 points: for nested conditional statements (if inside an if)
+- +2 point: for loops (for, while)
+- +1 point: for complex expressions (functions within expressions)
+- +2 points: for recursive functions
 
 ## Getting started
 
