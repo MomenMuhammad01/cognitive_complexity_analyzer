@@ -1,39 +1,30 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+## Intro
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Cognitive complexity allows us to measure the complexity of a piece of code with more accuracy. While it provides a decent overall assessment, it does overlook some important aspects that make code harder to understand.
 
 ## Features
+- Leverages Analyzer Packages: Utilizes the analyzer package to navigate the Abstract Syntax Tree (AST) of your Dart code.
+- Tracks Nesting Levels: Keeps track of the current nesting level (e.g., if statements within if statements) to account for increased complexity.
+- Considers Different Constructs: Assigns different base complexity values for various control flow statements (if, for, while, etc.) and expressions (logical operators, conditional expressions).
+- Handles Recursion: It identifies and adds complexity for recursive method calls.
+- Provides Complexity Score and High-Complexity Sections: Calculates a total complexity score and identifies lines exceeding a certain complexity threshold within a specific nesting depth.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## How it calculates
+the calculation is based on many factors and uses a points system based on each factor 
+
++1 point: for conditional statements (if, else if, switch)
++1 points: for nested conditional statements (if inside an if)
++2 point: for loops (for, while)
++1 point: for complex expressions (functions within expressions)
++2 points: for recursive functions
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+TODO: This package depends on analyzer package
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
 
-```dart
-const like = 'sample';
+```Command
+dart run --enable-vm-service cognitive_complexity_analyzer [REPLACE WITH FOLDER NAME THAT YOU WANT TO ANALYZE]
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
