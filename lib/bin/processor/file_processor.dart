@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:cognitive_complexity_analyzer/analyzer/analysis_results.dart';
-import 'package:cognitive_complexity_analyzer/analyzer/analysis_settings.dart';
-import 'package:cognitive_complexity_analyzer/visitor/cognitive_complexity_visitor.dart';
+import 'package:cognitive_complexity_analyzer/bin/analyzer/analysis_results.dart';
+import 'package:cognitive_complexity_analyzer/bin/analyzer/analysis_settings.dart';
+import 'package:cognitive_complexity_analyzer/bin/visitor/cognitive_complexity_visitor.dart';
 
 void calculateCognitiveComplexity(
     String code, CognitiveComplexityVisitor visitor) {

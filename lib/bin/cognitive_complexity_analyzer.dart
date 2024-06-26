@@ -2,9 +2,9 @@ library cognitive_complexity_analyzer;
 
 import 'dart:io';
 
-import 'analyzer/analysis_results.dart';
-import 'analyzer/analysis_settings.dart';
-import 'processor/file_processor.dart';
+import 'package:cognitive_complexity_analyzer/bin/analyzer/analysis_results.dart';
+import 'package:cognitive_complexity_analyzer/bin/analyzer/analysis_settings.dart';
+import 'package:cognitive_complexity_analyzer/bin/processor/file_processor.dart';
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
