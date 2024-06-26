@@ -7,9 +7,8 @@ import 'package:cognitive_complexity_analyzer/analyzer/analysis_settings.dart';
 import 'package:cognitive_complexity_analyzer/processor/file_processor.dart';
 
 void main(List<String> arguments) {
-  if (arguments.length < 2) {
+  if (arguments.isEmpty) {
     print('Error: Please provide a directory path and (optional) settings.');
-
     return;
   }
 
