@@ -1,11 +1,11 @@
 class AnalysisResult {
   String filePath;
-  int cognitiveComplexity;
+  int cognitiveComplexityScore;
   List<String> highComplexityLines;
 
   AnalysisResult(
     this.filePath,
-    this.cognitiveComplexity,
+    this.cognitiveComplexityScore,
     this.highComplexityLines,
   );
 }

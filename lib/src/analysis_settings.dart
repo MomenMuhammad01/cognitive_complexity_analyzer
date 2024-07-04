@@ -1,9 +1,9 @@
 class AnalysisSettings {
-  final int maxCognitiveComplexity;
+  final int maxCognitiveComplexityScore;
   final int highNestingLevelThreshold;
 
   AnalysisSettings({
-    required this.maxCognitiveComplexity,
+    required this.maxCognitiveComplexityScore,
     required this.highNestingLevelThreshold,
   });
 }
