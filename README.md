@@ -32,27 +32,27 @@ TODO: This package depends on src.analyzer package
     git:
       url: https://github.com/MomenMuhammad01/cognitive_complexity_analyzer.git
 ```
-2- Run The code in your project commandline with the following commands 
-
-- Without Custom Settings 
-```Command
-dart run --enable-vm-service cognitive_complexity_analyzer [REPLACE WITH FOLDER NAME THAT YOU WANT TO ANALYZE]
-```
-
-- With Custom Settings
-```Command
-dart run --enable-vm-service cognitive_complexity_analyzer [REPLACE WITH FOLDER NAME THAT YOU WANT TO ANALYZE] [COMPLEXITY NUM] [HighNestingThreshold]
-```
-- Examples : 
+2- Run The code in your project commandline with the following commands flags
 
 
-```
-dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src  # Without Custom Settings
+```All Commands Flags 
+-d, --directory                 The directory containing Dart files to analyze.
+-m, --max-complexity            Maximum cognitive complexity score a file shouldn't pass.
+                                (defaults to "15")
+-n, --high-nesting-threshold    Maximum nesting level allowed for a function.
+                                (defaults to "3")
+-s, --show-paths-as-tree        Maximum nesting level allowed for a function.
+                                (defaults to "false")
+-e, --exclude                   Use it to exclude files pattern from analyzer example : [_generated.dart,]
+-h, --help                      Show usage information.
 ```
 
+```Command Example
+dart run  cognitive_complexity_analyzer --dictionery [REPLACE WITH FOLDER NAME THAT YOU WANT TO ANALYZE]
 ```
-dart run --enable-vm-service cognitive_complexity_analyzer /path/to/your/project/src 20 4  #  maxComplexity 20 and highNestingThreshold 4
-```
+
+
+
 
 ## Generated Report File
 
