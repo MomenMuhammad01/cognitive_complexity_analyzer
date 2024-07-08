@@ -29,11 +29,6 @@ Complexity Factors Considered:
 ## Functions:
 - Recursion: If a method calls itself (direct recursion), it increases complexity.
 - Second-Level Functions (Nested Functions): The code specifically tracks nested functions and their complexities to assess their impact on the overall score.
-Other Factors:
-
-## Labeled Breaks and Continues:
--- These are considered more complex than unlabeled ones due to the introduced jump in control flow.
--- Early Returns: These are ignored
 
 
 
