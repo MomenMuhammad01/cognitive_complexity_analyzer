@@ -13,6 +13,8 @@ class StringsManager {
 
   static String cognitiveComplexityReport(String time, String date) =>
       'Cognitive Complexity Report ($time - $date)\n';
+  static String normalComplexityPercentage(double percentage) =>
+      'Normal Complexity Percentage: ${percentage.toStringAsFixed(2)}%';
 
   static const String noHighCognitiveComplexityFound =
       'No files with high cognitive complexity found.';
@@ -20,8 +22,8 @@ class StringsManager {
   static const String highCognitiveComplexityDetected =
       'High Cognitive Complexity Detected:\n';
 
-  static const String filePath = 'File Path: ';
-
+  static const String filePathTitle = 'File Path: ';
+  static String filePath(String path) => 'File Path: $path';
   static String cognitiveComplexityResults(final int complexityScore) =>
       'ISSUE : Cognitive Complexity: $complexityScore';
 
@@ -47,6 +49,8 @@ class StringsManager {
 
   static const String highNestingThresholdHelpMessage =
       "Maximum nesting level allowed for a function.";
+  static const String excludeFilesHelpMessage =
+      "Use it to exclude files pattern from analyzer example : [_generated.dart,]";
 
   static const String helpMessage = 'Show usage information.';
 }

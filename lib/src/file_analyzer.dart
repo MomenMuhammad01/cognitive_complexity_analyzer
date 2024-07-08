@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:cognitive_complexity_analyzer/analyzer.dart';
+import 'package:cognitive_complexity_analyzer/src/cognitive_complexity_visitor.dart';
 
 List<AnalysisResult> analyzeAllFiles(
     List<File> dartFiles, AnalysisSettings settings) {
@@ -20,14 +21,16 @@ AnalysisResult analyzeFile(File file, AnalysisSettings settings) {
   var codeContent = file.readAsStringSync();
   var complexityVisitor = CognitiveComplexityVisitor(
     complexityThreshold: settings.maxCognitiveComplexityScore,
+    maxNestingLevel: settings.highNestingLevelThreshold,
   );
   calculateCognitiveComplexity(codeContent, complexityVisitor);
 
   return AnalysisResult(
     file.path,
-    complexityVisitor.calculateTotalComplexityScore(),
-    complexityVisitor
-        .identifyHighComplexitySections(settings.highNestingLevelThreshold),
+    complexityVisitor.getTotalComplexityScore(),
+    complexityVisitor.getHighComplexitySections(
+      settings.highNestingLevelThreshold,
+    ),
   );
 }
 
