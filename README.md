@@ -11,13 +11,32 @@ Cognitive complexity allows us to measure the complexity of a piece of code with
 
 ## How it calculates
 
-the calculation is based on many factors and uses a points system based on each factor to evaluate if there is a cognitive issue or not
+The analysis relies heavily on traversing the Dart code's AST. This allows you to examine the structural elements of the code (functions, statements, expressions) and their relationships.
+Complexity Factors Considered:
 
-- +1 point: for conditional statements (if, else if, switch)
-- +1 points: for nested conditional statements (if inside an if)
-- +2 point: for loops (for, while)
-- +1 point: for complex expressions (functions within expressions)
-- +2 points: for recursive functions
+## Control Flow Structures:
+
+## Structural Complexity:
+- Each control flow structure (e.g., if, else, for, while, do, switch, catch, try) increases complexity by 1.
+- Nesting: Further nested control structures contribute to the complexity score.
+- The nesting depth is tracked, and exceeding the maxNestingLevel threshold is flagged as an issue.
+  
+## Hybrid Complexity:
+- This is a special case for else statements, which contribute to complexity but are not considered nested.
+
+## Logical Operators: Logical AND (&&) and OR (||)
+- operators within binary expressions are treated as additional control flow paths, contributing to complexity.
+
+## Functions:
+- Recursion: If a method calls itself (direct recursion), it increases complexity.
+- Second-Level Functions (Nested Functions): The code specifically tracks nested functions and their complexities to assess their impact on the overall score.
+Other Factors:
+
+## Labeled Breaks and Continues:
+-- These are considered more complex than unlabeled ones due to the introduced jump in control flow.
+-- Early Returns: These are ignored
+
+
 
 ## Getting started
 
