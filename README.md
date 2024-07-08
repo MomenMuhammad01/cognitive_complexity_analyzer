@@ -3,11 +3,10 @@
 Cognitive complexity allows us to measure the complexity of a piece of code with more accuracy. While it provides a decent overall assessment, it does overlook some important aspects that make code harder to understand.
 
 ## Features
-- Leverages Analyzer Packages: Utilizes the src.analyzer package to navigate the Abstract Syntax Tree (AST) of your Dart code.
-- Tracks Nesting Levels: Keeps track of the current nesting level (e.g., if statements within if statements) to account for increased complexity.
-- Considers Different Constructs: Assigns different base complexity values for various control flow statements (if, for, while, etc.) and expressions (logical operators, conditional expressions).
-- Handles Recursion: It identifies and adds complexity for recursive method calls.
-- Provides Complexity Score and High-Complexity Sections: Calculates a total complexity score and identifies lines exceeding a certain complexity threshold within a specific nesting depth.
+- Cognitive Complexity Calculation: Assesses the cognitive complexity of Dart code based on control flow, nesting, and recursion.
+- Customization: Allows users to set thresholds for maximum complexity and nesting levels.
+- File/Directory Analysis:  Analyzes Dart files Cognitive Complexity within a directory, with options to exclude specific files.
+- Reporting: Generates a summary report in the console and a detailed report file, optionally displaying file paths in a tree structure.
 
 ## How it calculates
 
