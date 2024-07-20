@@ -14,13 +14,13 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   final int maxNestingLevel;
 
   /// The calculator responsible for tracking and assessing complexity.
-  final ComplexityCalculator complexityCalculator;
+  final CognitiveComplexityCalculator complexityCalculator;
 
   /// Constructor to initialize the visitor with complexity thresholds.
   CognitiveComplexityVisitor({
     required this.complexityThreshold,
     required this.maxNestingLevel,
-  }) : complexityCalculator = ComplexityCalculator(
+  }) : complexityCalculator = CognitiveComplexityCalculator(
           complexityThreshold: complexityThreshold,
           maxNestingLevel: maxNestingLevel,
         );
@@ -28,32 +28,32 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// Visits a FunctionExpression node.
   /// - Informs the calculator that a new function scope is being entered.
   /// - Recursively visits the body of the function to assess its complexity.
-  /// - Informs the calculator that the function scope is being exited.  @override
+  /// - Informs the calculator that the function scope is being exited.
+  @override
   void visitFunctionExpression(FunctionExpression node) {
     complexityCalculator
-        .enterFunction(node); // Notify calculator of function entry
+        .enterFunctionNode(node); // Notify calculator of function entry
     super.visitFunctionExpression(node); // Traverse the function body
     complexityCalculator
-        .leaveFunction(node); // Notify calculator of function exit
+        .exitFunctionNode(node); // Notify calculator of function exit
   }
 
   /// Visits a FunctionDeclaration node.
   /// - Performs the same actions as visitFunctionExpression
-  /// both nodes represent functions but this represents function's declaration
+  /// both nodes represent functions but this represents function's declaration.
   @override
   void visitFunctionDeclaration(FunctionDeclaration node) {
-    complexityCalculator.enterFunction(node);
+    complexityCalculator.enterFunctionNode(node);
     super.visitFunctionDeclaration(node);
-    complexityCalculator.leaveFunction(node);
+    complexityCalculator.exitFunctionNode(node);
   }
 
   /// Visits a Block node.
   /// - Checks if entering this block increases the nesting depth, and updates the calculator if needed.
   /// - Continues traversal by visiting all statements within the block.
   @override
-  @override
   void visitBlock(Block node) {
-    complexityCalculator.increaseNestingIfNeeded(node);
+    complexityCalculator.increaseNestingDepthIfNeeded(node);
     super.visitBlock(node); // Recursively visit statements within the block
   }
 
@@ -65,16 +65,16 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   ///   further increasing nesting depth only if it's not another 'if' statement (to avoid double-counting).
   @override
   void visitIfStatement(IfStatement node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increment for 'if'
-    complexityCalculator.increaseNestingIfNeeded(node);
+    complexityCalculator.addStructuralComplexity(1); // Increment for 'if'
+    complexityCalculator.increaseNestingDepthIfNeeded(node);
     super.visitIfStatement(node);
     // Handle 'else if' and 'else'
     if (node.elseStatement != null) {
-      complexityCalculator.increaseHybridComplexity(1); // Hybrid for 'else'
+      complexityCalculator.addHybridComplexity(1); // Hybrid for 'else'
       if (node.elseStatement is! IfStatement) {
         // Only increase nesting for plain 'else'
         complexityCalculator
-            .increaseNestingIfNeeded(node.elseStatement as AstNode);
+            .increaseNestingDepthIfNeeded(node.elseStatement as AstNode);
       }
     }
   }
@@ -85,9 +85,9 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// - Continues traversal by visiting the body of the while loop.
   @override
   void visitWhileStatement(WhileStatement node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increase Complexity
+    complexityCalculator.addStructuralComplexity(1); // Increase Complexity
     complexityCalculator
-        .increaseNestingIfNeeded(node); // Increase Nesting if needed
+        .increaseNestingDepthIfNeeded(node); // Increase Nesting if needed
     super.visitWhileStatement(node); // Visit loop body
   }
 
@@ -97,9 +97,9 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// - Continues traversal by visiting the body of the for loop.
   @override
   void visitForStatement(ForStatement node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increase Complexity
+    complexityCalculator.addStructuralComplexity(1); // Increase Complexity
     complexityCalculator
-        .increaseNestingIfNeeded(node); // Increase Nesting if needed
+        .increaseNestingDepthIfNeeded(node); // Increase Nesting if needed
     super.visitForStatement(node); // Visit loop body
   }
 
@@ -109,9 +109,9 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// - Continues traversal by visiting the body of the do-while loop.
   @override
   void visitDoStatement(DoStatement node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increase Complexity
+    complexityCalculator.addStructuralComplexity(1); // Increase Complexity
     complexityCalculator
-        .increaseNestingIfNeeded(node); // Increase Nesting if needed
+        .increaseNestingDepthIfNeeded(node); // Increase Nesting if needed
     super.visitDoStatement(node); // Visit loop body
   }
 
@@ -122,7 +122,7 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   @override
   void visitContinueStatement(ContinueStatement node) {
     if (node.label != null) {
-      complexityCalculator.increaseFundamentalComplexity(1);
+      complexityCalculator.addFundamentalComplexity(1);
     }
     super.visitContinueStatement(node);
   }
@@ -133,9 +133,9 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// - Continues traversal by visiting all the members (cases) within the switch statement.
   @override
   void visitSwitchStatement(SwitchStatement node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increase Complexity
+    complexityCalculator.addStructuralComplexity(1); // Increase Complexity
     complexityCalculator
-        .increaseNestingIfNeeded(node); // Increase Nesting if needed
+        .increaseNestingDepthIfNeeded(node); // Increase Nesting if needed
     super.visitSwitchStatement(node); // visit switch block
   }
 
@@ -145,9 +145,9 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// - Continues traversal by visiting the body of the catch clause.
   @override
   void visitCatchClause(CatchClause node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increase Complexity
+    complexityCalculator.addStructuralComplexity(1); // Increase Complexity
     complexityCalculator
-        .increaseNestingIfNeeded(node); // Increase Nesting if needed
+        .increaseNestingDepthIfNeeded(node); // Increase Nesting if needed
     super.visitCatchClause(node); // visit catch block
   }
 
@@ -167,17 +167,18 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// Visits a ConditionalExpression node (ternary operator ?:).
   /// - Increases structural complexity due to the conditional branching.
   /// - Checks and increases nesting depth if needed.
-  /// - Continues traversal by visiting the condition, thenExpression, and elseExpression.  @override
+  /// - Continues traversal by visiting the condition, thenExpression, and elseExpression.
+  @override
   void visitConditionalExpression(ConditionalExpression node) {
-    complexityCalculator.increaseStructuralComplexity(1); // Increase Complexity
+    complexityCalculator.addStructuralComplexity(1); // Increase Complexity
     complexityCalculator
-        .increaseNestingIfNeeded(node); // Increase Nesting if needed
+        .increaseNestingDepthIfNeeded(node); // Increase Nesting if needed
     super.visitConditionalExpression(node); // Visit all parts of the expression
   }
 
   /// Visits a BinaryExpression node (e.g., arithmetic operations, comparisons, logical AND/OR).
   /// - If the binary expression involves logical operators (&& or ||), it calls the
-  ///   `handleLogicalExpression` method on the `complexityCalculator` to handle the complexity
+  ///   `processLogicalExpression` method on the `complexityCalculator` to handle the complexity
   ///   associated with logical sequences.
   /// - If the binary expression is a null-coalescing operator (??), it's ignored, as it doesn't contribute
   ///   to cognitive complexity.
@@ -188,10 +189,8 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
     // Check for logical OR
     if (node.operator.type == TokenType.AMPERSAND_AMPERSAND ||
         node.operator.type == TokenType.BAR_BAR) {
-      complexityCalculator.handleLogicalExpression(
-        node,
-        this,
-      ); // Increment for logical sequences
+      complexityCalculator.processLogicalExpression(
+          node, this); // Increment for logical sequences
     } else if (node.operator.type == TokenType.QUESTION_QUESTION) {
       // Ignore null-coalescing operator
     }
@@ -204,7 +203,7 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// - Continues traversal by visiting the arguments passed to the method.
   @override
   void visitMethodInvocation(MethodInvocation node) {
-    complexityCalculator.handleMethodInvocation(node);
+    complexityCalculator.processMethodInvocation(node);
     super.visitMethodInvocation(node);
   }
 
@@ -216,9 +215,8 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   void visitBreakStatement(BreakStatement node) {
     if (node.label != null) {
       // Check if it's a labeled break
-      complexityCalculator.increaseFundamentalComplexity(
-        1,
-      ); // Increase complexity for labeled break
+      complexityCalculator
+          .addFundamentalComplexity(1); // Increase complexity for labeled break
     }
     super.visitBreakStatement(node); // Continue traversal
   }
@@ -226,7 +224,6 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
   /// Visits a ReturnStatement node.
   /// - Ignores early returns as they don't affect cognitive complexity in this model.
   ///   The complexity of the returned value is already accounted for in its own subtree.
-  @override
   @override
   void visitReturnStatement(ReturnStatement node) {
     // Ignore early returns
@@ -239,11 +236,11 @@ class CognitiveComplexityVisitor extends RecursiveAstVisitor<void> {
 
   /// Gets the total calculated complexity score.
   int getTotalComplexityScore() {
-    return complexityCalculator.totalComplexity;
+    return complexityCalculator.totalComplexityScore;
   }
 
   /// Gets a list of nodes with nesting levels exceeding the maximum allowed.
   List<String> getHighNestingLevelNodes() {
-    return complexityCalculator.highNestingLevelNodes;
+    return complexityCalculator.highNestingLevelNodesList;
   }
 }

@@ -6,7 +6,7 @@ import 'package:cognitive_complexity_analyzer/src/models/second_level_function.d
 
 /// The `ComplexityCalculator` class provides methods to calculate cognitive complexity
 /// for Dart code using the AST (Abstract Syntax Tree) structure.
-class ComplexityCalculator {
+class CognitiveComplexityCalculator {
   /// Threshold to identify high complexity
   final int complexityThreshold;
 
@@ -14,83 +14,81 @@ class ComplexityCalculator {
   final int maxNestingLevel;
 
   /// Total accumulated complexity score
-  int totalComplexity = 0;
+  int totalComplexityScore = 0;
 
   /// Current nesting depth
-  int nestingDepth = 0;
+  int currentNestingDepth = 0;
 
   /// Recorded complexity points
-  final List<ComplexityPoint> complexityPoints = [];
+  final List<ComplexityPoint> complexityPointsList = [];
 
   /// Nodes with high nesting levels
-  final List<String> highNestingLevelNodes = [];
+  final List<String> highNestingLevelNodesList = [];
 
   /// Identified complexity issues
-  final List<ComplexityIssue> issues = [];
+  final List<ComplexityIssue> complexityIssuesList = [];
 
   /// Flag for logical sequence detection
   bool isInLogicalSequence = false;
 
   /// Set of logical expressions considered
-  Set<AstNode> consideredLogicalExpressions = {};
+  Set<AstNode> consideredLogicalExpressionsSet = {};
 
   /// Stack of currently enclosing functions
-  List<AstNode> enclosingFunctions = [];
+  List<AstNode> enclosingFunctionsStack = [];
 
   /// List of second-level functions
-  List<SecondLevelFunction> secondLevelFunctions = [];
+  List<SecondLevelFunction> nestedFunctionsList = [];
 
   /// Complexity points if not nested
-  List<ComplexityPoint> complexityIfNotNested = [];
+  List<ComplexityPoint> nonNestedComplexityPointsList = [];
 
   /// Complexity points if nested
-  List<ComplexityPoint> complexityIfNested = [];
+  List<ComplexityPoint> nestedComplexityPointsList = [];
 
   /// Flag for top-level structural complexity
-  bool topLevelHasStructuralComplexity = false;
+  bool hasTopLevelStructuralComplexity = false;
 
   /// Top-level own complexity points
-  List<ComplexityPoint> topLevelOwnComplexity = [];
+  List<ComplexityPoint> topLevelComplexityPointsList = [];
 
   /// Set of nodes considered for nesting
-  Set<AstNode> nestingNodes = {};
+  Set<AstNode> consideredNestingNodesSet = {};
 
   /// Name of the current function being analyzed
   String? currentFunctionName;
 
   /// Constructor to initialize the `ComplexityCalculator` with given thresholds.
-  ComplexityCalculator({
+  CognitiveComplexityCalculator({
     required this.complexityThreshold,
     required this.maxNestingLevel,
   });
 
   /// Handles entering a function node (FunctionDeclaration or FunctionExpression).
   /// - Resets the function-specific variables like nesting depth, complexity points, etc.
-  /// - Stores the current function in the `enclosingFunctions` stack.
-  void enterFunction(AstNode node) {
-    enclosingFunctions.add(node);
-    complexityIfNotNested = [];
-    complexityIfNested = [];
-    topLevelOwnComplexity = [];
-    nestingNodes.clear();
-    nestingDepth = 0;
-    topLevelHasStructuralComplexity = false;
+  /// - Stores the current function in the `enclosingFunctionsStack`.
+  void enterFunctionNode(AstNode node) {
+    enclosingFunctionsStack.add(node);
+    nonNestedComplexityPointsList = [];
+    nestedComplexityPointsList = [];
+    topLevelComplexityPointsList = [];
+    consideredNestingNodesSet.clear();
+    currentNestingDepth = 0;
+    hasTopLevelStructuralComplexity = false;
   }
 
   /// Handles logical expressions (&& and ||) within binary expressions.
   /// - Checks if the visitor is already inside a logical sequence.
   /// - If not, increments complexity and sets the `isInLogicalSequence` flag.
   /// - Recursively visits the left and right operands of the logical expression.
-  void handleLogicalExpression(
+  void processLogicalExpression(
     BinaryExpression node,
     CognitiveComplexityVisitor visitor,
   ) {
     if (!isInLogicalSequence) {
       /// Check if this is a new logical sequence
       isInLogicalSequence = true;
-      increaseFundamentalComplexity(
-        1,
-      );
+      addFundamentalComplexity(1);
 
       /// Increment for the start of the sequence
     }
@@ -105,50 +103,104 @@ class ComplexityCalculator {
   /// Handles method invocations within the code.
   /// - Checks for recursive calls by comparing the invoked method name with the name of the enclosing method.
   /// - If recursion is detected, increments complexity.
-  void handleMethodInvocation(MethodInvocation node) {
+  void processMethodInvocation(MethodInvocation node) {
     final name = node.methodName.name;
-    if (enclosingFunctions.isNotEmpty &&
-        enclosingFunctions.last is MethodDeclaration &&
-        (enclosingFunctions.last as MethodDeclaration).name.lexeme == name) {
-      increaseFundamentalComplexity(1); // Increment for recursion
+    if (enclosingFunctionsStack.isNotEmpty &&
+        enclosingFunctionsStack.last is MethodDeclaration &&
+        (enclosingFunctionsStack.last as MethodDeclaration).name.lexeme ==
+            name) {
+      addFundamentalComplexity(1); // Increment for recursion
+    }
+  }
+
+  /// Method to increase nesting depth if the node is not already considered.
+  void increaseNestingDepthIfNeeded(AstNode node) {
+    if (!consideredNestingNodesSet.contains(node)) {
+      currentNestingDepth++;
+      consideredNestingNodesSet.add(node);
+    }
+  }
+
+  /// Method to increase structural complexity and nesting depth.
+  void addStructuralComplexity(int complexityPoints) {
+    addComplexity(complexityPoints);
+    currentNestingDepth++;
+  }
+
+  /// Method to increase hybrid complexity without changing nesting depth.
+  void addHybridComplexity(int complexityPoints) {
+    addComplexity(complexityPoints);
+    // Do not increase nesting depth
+  }
+
+  /// Method to increase fundamental complexity without changing nesting depth.
+  void addFundamentalComplexity(int complexityPoints) {
+    addComplexity(complexityPoints);
+    // Do not increase nesting depth
+  }
+
+  /// Increases complexity by the specified amount, considering nesting level and function context.
+  /// - Creates a `ComplexityPoint` to record the added complexity and the current nesting level.
+  /// - If it's a top-level structure (no enclosing function), increases the total complexity.
+  /// - If it's a top-level function, marks it as having structural complexity and adds the complexity point.
+  /// - Otherwise, it's a nested function, so complexity points are added to both the nested and non-nested lists.
+  void addComplexity(int complexityPoints) {
+    final complexityPoint = ComplexityPoint(
+        complexity: complexityPoints, nestingLevel: currentNestingDepth);
+    if (enclosingFunctionsStack.isEmpty) {
+      // Increase total complexity for top-level structures
+      totalComplexityScore += complexityPoints;
+    } else if (enclosingFunctionsStack.length == 1) {
+      // Increase complexity for top-level functions
+      hasTopLevelStructuralComplexity = true;
+      topLevelComplexityPointsList.add(complexityPoint);
+    } else {
+      // Increase complexity for nested functions
+      nestedComplexityPointsList.add(ComplexityPoint(
+        complexity: complexityPoints + 1,
+        nestingLevel: currentNestingDepth,
+      ));
+      nonNestedComplexityPointsList.add(complexityPoint);
     }
   }
 
   /// Handles leaving a function node (FunctionDeclaration or FunctionExpression).
-  /// - Removes the function from the `enclosingFunctions` stack.
-  /// - If it's a second-level function (nested function), adds it to the `secondLevelFunctions` list.
+  /// - Removes the function from the `enclosingFunctionsStack`.
+  /// - If it's a second-level function (nested function), adds it to the `nestedFunctionsList`.
   /// - Otherwise, checks the final complexity of the function.
-  void leaveFunction(AstNode node) {
-    enclosingFunctions.removeLast();
+  void exitFunctionNode(AstNode node) {
+    enclosingFunctionsStack.removeLast();
 
     /// Pop the current function from the stack
-    final complexity =
-        complexityIfNested.isEmpty ? complexityIfNotNested : complexityIfNested;
+    final complexityPointsList = nestedComplexityPointsList.isEmpty
+        ? nonNestedComplexityPointsList
+        : nestedComplexityPointsList;
 
     /// Check if it's a second-level function
-    if (node is FunctionExpression && enclosingFunctions.isNotEmpty) {
-      secondLevelFunctions.add(
+    if (node is FunctionExpression && enclosingFunctionsStack.isNotEmpty) {
+      nestedFunctionsList.add(
         SecondLevelFunction(
           node: node,
-          parent: enclosingFunctions.last,
-          complexityIfThisSecondaryIsTopLevel: topLevelOwnComplexity,
-          complexityIfNested: complexity,
+          parent: enclosingFunctionsStack.last,
+          complexityIfThisSecondaryIsTopLevel: topLevelComplexityPointsList,
+          complexityIfNested: complexityPointsList,
         ),
       );
     } else {
-      checkFunction(complexity, node);
+      checkFunctionComplexity(complexityPointsList, node);
     }
   }
 
   /// Checks the final complexity of a function after it is processed.
   /// - Calculates the total complexity of the function.
-  /// - If the complexity exceeds the threshold, creates a ComplexityIssue and adds it to the `issues` list.
-  void checkFunction(List<ComplexityPoint> complexity, AstNode node) {
-    final complexityAmount = complexity.fold(
+  /// - If the complexity exceeds the threshold, creates a ComplexityIssue and adds it to the `complexityIssuesList`.
+  void checkFunctionComplexity(
+      List<ComplexityPoint> complexityPointsList, AstNode node) {
+    final complexityAmount = complexityPointsList.fold(
       0,
       (nestingLevel, point) => nestingLevel + point.complexity,
     );
-    totalComplexity += complexityAmount;
+    totalComplexityScore += complexityAmount;
 
     /// Check if complexity exceeds threshold
     if (complexityAmount > complexityThreshold) {
@@ -163,7 +215,7 @@ class ComplexityCalculator {
 
       /// Add the ComplexityIssue, associating it with the relevant token
       if (maybeMethod != null) {
-        issues.add(
+        complexityIssuesList.add(
           ComplexityIssue(
             complexity: complexityAmount,
             token: maybeMethod.name,
@@ -173,7 +225,7 @@ class ComplexityCalculator {
       }
 
       if (maybeConstructor != null) {
-        issues.add(
+        complexityIssuesList.add(
           ComplexityIssue(
             complexity: complexityAmount,
             token: maybeConstructor.name ?? maybeConstructor.beginToken,
@@ -183,7 +235,7 @@ class ComplexityCalculator {
       }
 
       if (maybeFunction != null) {
-        issues.add(
+        complexityIssuesList.add(
           ComplexityIssue(
             complexity: complexityAmount,
             token: maybeFunction.name,
@@ -193,7 +245,7 @@ class ComplexityCalculator {
       }
 
       if (maybeArrowFunction != null) {
-        issues.add(
+        complexityIssuesList.add(
           ComplexityIssue(
             complexity: complexityAmount,
             token: maybeArrowFunction.name,
@@ -202,7 +254,7 @@ class ComplexityCalculator {
         return;
       }
 
-      issues.add(
+      complexityIssuesList.add(
         ComplexityIssue(
           complexity: complexityAmount,
           token: node
@@ -212,62 +264,11 @@ class ComplexityCalculator {
     }
   }
 
-  /// Method to increase structural complexity and nesting depth.
-  void increaseStructuralComplexity(int added) {
-    increaseComplexity(added);
-    nestingDepth++;
-  }
-
-  /// Method to increase hybrid complexity without changing nesting depth.
-  void increaseHybridComplexity(int added) {
-    increaseComplexity(added);
-    // Do not increase nesting depth
-  }
-
-  /// Method to increase fundamental complexity without changing nesting depth.
-  void increaseFundamentalComplexity(int added) {
-    increaseComplexity(added);
-    // Do not increase nesting depth
-  }
-
-  /// Method to increase nesting depth if the node is not already considered.
-  void increaseNestingIfNeeded(AstNode node) {
-    if (!nestingNodes.contains(node)) {
-      nestingDepth++;
-      nestingNodes.add(node);
-    }
-  }
-
-  /// Increases complexity by the specified amount, considering nesting level and function context.
-  /// - Creates a `ComplexityPoint` to record the added complexity and the current nesting level.
-  /// - If it's a top-level structure (no enclosing function), increases the total complexity.
-  /// - If it's a top-level function, marks it as having structural complexity and adds the complexity point.
-  /// - Otherwise, it's a nested function, so complexity points are added to both the nested and non-nested lists.
-  void increaseComplexity(int added) {
-    final complexityPoint =
-        ComplexityPoint(complexity: added, nestingLevel: nestingDepth);
-    if (enclosingFunctions.isEmpty) {
-      // Increase total complexity for top-level structures
-      totalComplexity += added;
-    } else if (enclosingFunctions.length == 1) {
-      // Increase complexity for top-level functions
-      topLevelHasStructuralComplexity = true;
-      topLevelOwnComplexity.add(complexityPoint);
-    } else {
-      // Increase complexity for nested functions
-      complexityIfNested.add(ComplexityPoint(
-        complexity: added + 1,
-        nestingLevel: nestingDepth,
-      ));
-      complexityIfNotNested.add(complexityPoint);
-    }
-  }
-
   /// Gets sections of code with high complexity based on a nesting threshold.
   /// - Filters complexity points that exceed the `complexityThreshold` and have a nesting level higher than the `nestingThreshold`.
   /// - Returns a list of strings indicating the nesting levels where high complexity was found.
   List<String> getHighComplexitySections(int nestingThreshold) {
-    return complexityPoints
+    return complexityPointsList
         .where((point) =>
             point.complexity > complexityThreshold &&
             point.nestingLevel > nestingThreshold)
