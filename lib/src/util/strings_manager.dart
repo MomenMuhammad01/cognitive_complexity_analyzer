@@ -1,18 +1,18 @@
 class StringsManager {
   static String consoleTitle = "Cognitive Complexity Report:";
-  static String generatedFileName(String date, String time) =>
-      'cognitive_complexity_report-$date-$time.txt';
+  static String generatedFileName = 'reports/cognitive_complexity_report.txt';
 
   static const String argumentsError =
       'Error: Please provide a directory path and (optional) settings.';
+
+  static String reportDirectoryPath = "reports";
 
   static String handlingError(dynamic error) => "Error: ${error.toString()}";
 
   static String directoryNotFound(String directoryPath) =>
       'Directory not found: $directoryPath';
 
-  static String cognitiveComplexityReport(String time, String date) =>
-      'Cognitive Complexity Report ($time - $date)\n';
+  static String cognitiveComplexityReport = 'Cognitive Complexity Report\n';
   static String normalComplexityPercentage(double percentage) =>
       'Normal Complexity Percentage: ${percentage.toStringAsFixed(2)}%';
 
