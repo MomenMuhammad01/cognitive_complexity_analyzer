@@ -1,0 +1,7 @@
+Cognitive Complexity Report
+
+==============================
+Normal Complexity Percentage: 100.00%
+Files processed: 1
+Files with high cognitive complexity: 0
+==============================
