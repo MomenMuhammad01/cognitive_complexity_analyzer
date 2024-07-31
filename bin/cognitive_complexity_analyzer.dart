@@ -57,7 +57,7 @@ void main(List<String> arguments) {
   } catch (e) {
     print(StringsManager.argumentsError);
     print(parser.usage);
-    return;
+    exit(1);
   }
 
   /// If the help flag is set, display the help message and exit
@@ -70,7 +70,7 @@ void main(List<String> arguments) {
   if (!argResults.wasParsed('directory')) {
     print(StringsManager.argumentsError);
     print(parser.usage);
-    return;
+    exit(2);
   }
 
   /// Extract values from the parsed arguments
@@ -91,10 +91,9 @@ void main(List<String> arguments) {
 
   // Check if the directory exists
   if (!directory.existsSync()) {
-    print(
-      StringsManager.directoryNotFound(directoryPath),
-    ); // Print an error message if not found
-    return;
+    print(StringsManager.directoryNotFound(
+        directoryPath)); // Print an error message if not found
+    exit(3);
   }
 
   /// Get all Dart files within the directory, excluding those matching the patterns
@@ -111,6 +110,7 @@ void main(List<String> arguments) {
     showPathsAsTree: showPathsAsTree,
   );
   complexityReporter.generateAndPrintReport();
+  exit(0);
 }
 
 /// Private helper function to retrieve all Dart files within a directory,
