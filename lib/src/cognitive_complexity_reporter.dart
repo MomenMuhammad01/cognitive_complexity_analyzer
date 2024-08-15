@@ -74,6 +74,7 @@ class CognitiveComplexityReporter {
       }
     } catch (error) {
       print('Error during report creation: $error');
+      exit(6);
     }
   }
 
