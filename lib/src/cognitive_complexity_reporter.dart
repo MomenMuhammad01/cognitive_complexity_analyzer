@@ -53,12 +53,11 @@ class CognitiveComplexityReporter {
     print('Starting _createReport');
     final directory = Directory(StringsManager.reportDirectoryPath);
 
-    if (directory.existsSync()) {
+    if (!directory.existsSync()) {
       directory.createSync(recursive: true);
     }
 
     var reportFile = File(StringsManager.generatedFileName);
-
     try {
       var openFile = reportFile.openSync(mode: FileMode.write);
       try {
