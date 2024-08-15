@@ -109,7 +109,12 @@ void main(List<String> arguments) {
     settings: settings,
     showPathsAsTree: showPathsAsTree,
   );
-  complexityReporter.generateAndPrintReport();
+  try {
+    complexityReporter.generateAndPrintReport();
+  } catch (e) {
+    print(StringsManager.handlingError(e));
+    exit(5);
+  }
   exit(0);
 }
 

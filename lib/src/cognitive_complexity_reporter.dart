@@ -36,8 +36,7 @@ class CognitiveComplexityReporter {
   /// Generates and prints the complexity report to the console.
   /// If no high complexity files are found, prints a message indicating so.
   /// Otherwise, calls `_createReport` to generate the report file and prints a summary to the console.
-  void generateAndPrintReport() {
-    _createReport();
+  void generateAndPrintReport() async {
     // Print the report summary to the console
     print(StringsManager.consoleTitle);
     print(StringsManager.divider);
@@ -45,37 +44,37 @@ class CognitiveComplexityReporter {
     print(StringsManager.filesWithHighComplexity(results.length));
     print(
         StringsManager.normalComplexityPercentage(normalComplexityPercentage));
+    _createReport();
   }
 
   /// Private method to create the report file and write the report content to it.
   /// Handles potential errors during file creation and writing.
-  void _createReport() async {
+  void _createReport() {
+    print('Starting _createReport');
     final directory = Directory(StringsManager.reportDirectoryPath);
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
+
+    if (directory.existsSync()) {
+      directory.createSync(recursive: true);
     }
-    String reportFilename =
-        _generateReportFilename(); // Generate the report file name
-    var reportFile = File(reportFilename);
+
+    var reportFile = File(StringsManager.generatedFileName);
+
     try {
-      var reportFileSink = await reportFile.openWrite();
-      reportFileSink.write(
-        _generateReportContent(), // Write the report content
-      );
-
-      await reportFileSink.flush();
-      reportFileSink.close();
-      print(StringsManager.divider);
-      print(StringsManager.reportGeneratedAt(reportFilename));
+      var openFile = reportFile.openSync(mode: FileMode.write);
+      try {
+        openFile.writeString(
+          _generateReportContent(), // Write the report content
+        );
+        openFile.flush();
+      } finally {
+        print(StringsManager.divider);
+        print(
+            StringsManager.reportGeneratedAt(StringsManager.generatedFileName));
+        openFile.close();
+      }
     } catch (error) {
-      print(
-          StringsManager.handlingError(error)); // Handle potential file errors
+      print('Error during report creation: $error');
     }
-  }
-
-  /// Private helper method to generate a unique report file name based on the current timestamp.
-  String _generateReportFilename() {
-    return StringsManager.generatedFileName;
   }
 
   /// Private method to generate the content of the report as a string.
